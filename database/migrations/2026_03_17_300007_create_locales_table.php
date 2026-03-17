@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('locales', function (Blueprint $table) {
             $table->id();
-            $table->string('loca_nombre', 45);
-            $table->string('loca_direccion', 45)->nullable();
+            $table->string('loca_nombre', 100);
+            $table->string('loca_direccion', 200)->nullable();
             $table->unsignedBigInteger('comu_id');
 
             $table->index('comu_id', 'fk_locales_comuna1_idx');

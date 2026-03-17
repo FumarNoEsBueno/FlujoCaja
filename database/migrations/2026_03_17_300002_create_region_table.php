@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('region', function (Blueprint $table) {
             $table->id();
-            $table->string('regi_nombre', 45);
+            $table->string('regi_nombre', 120);
             $table->timestamps();
         });
     }

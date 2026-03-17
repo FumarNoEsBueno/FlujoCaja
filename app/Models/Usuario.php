@@ -1,12 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class Usuario extends Model
+class Usuario extends Authenticatable implements JWTSubject
 {
     protected $table = 'usuarios';
 
@@ -26,9 +29,38 @@ class Usuario extends Model
         'usua_password',
     ];
 
+    /** @var array<string, string> */
     protected $casts = [
         'usua_fecha_nac' => 'date',
     ];
+
+    // ─── JWTSubject ──────────────────────────────────────────────────────────
+
+    public function getJWTIdentifier(): mixed
+    {
+        return $this->getKey();
+    }
+
+    /** @return array<string, mixed> */
+    public function getJWTCustomClaims(): array
+    {
+        return [
+            'role_id' => $this->role_id,
+        ];
+    }
+
+    // ─── Auth: campo de password ──────────────────────────────────────────────
+
+    /**
+     * Authenticatable espera getAuthPassword().
+     * Nuestro campo se llama usua_password, así que lo mapeamos.
+     */
+    public function getAuthPassword(): string
+    {
+        return $this->usua_password;
+    }
+
+    // ─── Relaciones ───────────────────────────────────────────────────────────
 
     public function rol(): BelongsTo
     {

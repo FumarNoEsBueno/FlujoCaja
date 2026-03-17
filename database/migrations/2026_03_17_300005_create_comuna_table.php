@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('comuna', function (Blueprint $table) {
             $table->id();
-            $table->string('comu_nombre', 45);
+            $table->string('comu_nombre', 120);
             $table->unsignedBigInteger('regi_id');
 
             $table->index('regi_id', 'fk_comuna_region1_idx');

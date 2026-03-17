@@ -1,25 +1,35 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
-use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $this->call([
+            // 1. Catálogos base (sin dependencias externas)
+            RegionSeeder::class,          // → regiones
+            ComunaSeeder::class,          // → comunas (necesita regiones)
+            RolSeeder::class,             // → roles
+            PermisoSeeder::class,         // → permisos
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            // 2. Relaciones entre catálogos
+            PermisosPorRolSeeder::class,  // → permisos_por_rol (necesita roles + permisos)
+
+            // 3. Infraestructura de locales
+            LocalSeeder::class,           // → locales (necesita comunas)
+            CajaSeeder::class,            // → cajas (necesita locales)
+
+            // 4. Productos (independiente)
+            ProductoSeeder::class,        // → productos
+
+            // 5. Usuarios y asignaciones (al final porque necesitan todo lo anterior)
+            UsuarioSeeder::class,         // → usuarios (necesita roles)
+            UsuariosPorCajaSeeder::class, // → usuarios_por_caja (necesita usuarios + cajas)
         ]);
     }
 }
