@@ -8,6 +8,7 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Traits\ApiResponser;
 use App\Repositories\Auth\DTOs\LoginDTO;
 use App\Repositories\Auth\Interfaces\AuthRepositoryInterface;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Throwable;
 
@@ -38,7 +39,7 @@ class AuthController extends Controller
                 message: 'Sesión iniciada correctamente.',
                 statusCode: 200,
             );
-        } catch (Throwable $e) {
+        } catch (Exception $e) {
             return $this->errorResponse(
                 message: 'Error al intentar iniciar sesión.',
                 statusCode: 500,
@@ -62,7 +63,7 @@ class AuthController extends Controller
                 data: $usuario,
                 message: 'Usuario autenticado.',
             );
-        } catch (Throwable $e) {
+        } catch (Exception $e) {
             return $this->errorResponse(
                 message: 'No se pudo obtener el usuario.',
                 statusCode: 500,
@@ -86,7 +87,7 @@ class AuthController extends Controller
                 data: $this->buildTokenPayload($token),
                 message: 'Token renovado correctamente.',
             );
-        } catch (Throwable $e) {
+        } catch (Exception $e) {
             return $this->errorResponse(
                 message: 'No se pudo renovar el token.',
                 statusCode: 401,
@@ -109,7 +110,7 @@ class AuthController extends Controller
             return $this->successResponse(
                 message: 'Sesión cerrada correctamente.',
             );
-        } catch (Throwable $e) {
+        } catch (Exception $e) {
             return $this->errorResponse(
                 message: 'Error al cerrar sesión.',
                 statusCode: 500,

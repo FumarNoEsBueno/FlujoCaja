@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Repositories\Auth\Interfaces;
 
-use App\Models\Usuario;
 use App\Repositories\Auth\DTOs\LoginDTO;
 
 interface AuthRepositoryInterface
@@ -26,7 +25,9 @@ interface AuthRepositoryInterface
     public function refresh(): string;
 
     /**
-     * Retorna el usuario autenticado en la request actual.
+     * Retorna los datos del usuario autenticado con su rol y permisos.
+     *
+     * @return array{usuario: array, permisos: string[]}
      */
-    public function me(): Usuario;
+    public function me(): array;
 }

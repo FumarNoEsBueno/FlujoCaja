@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Traits;
 
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Log;
@@ -61,16 +62,16 @@ trait ApiResponser
     protected function errorResponse(
         string $message,
         int $statusCode = 500,
-        ?Throwable $exception = null,
-        string $method = '',
+        ?Exception $exception = null,
+        string $method = 'Metodo no especificado',
     ): JsonResponse {
         if ($exception) {
-            Log::error('API Error', [
-                'message' => $exception->getMessage(),
-                'method' => $method ?: static::class,
-                'file' => $exception->getFile(),
-                'line' => $exception->getLine(),
-                'status_code' => $statusCode,
+            Log::error([
+                'Mensaje' => $exception->getMessage(),
+                'Archivo' => $exception->getFile(),
+                'Linea' => $exception->getLine(),
+                'Codigo' => $statusCode,
+                'Metodo' => $method,
             ]);
         }
 

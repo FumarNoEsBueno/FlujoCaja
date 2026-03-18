@@ -24,7 +24,10 @@ class DatabaseSeeder extends Seeder
             LocalSeeder::class,           // → locales (necesita comunas)
             CajaSeeder::class,            // → cajas (necesita locales)
 
-            // 4. Productos (independiente)
+            // 4. Catálogos de movimientos
+            TipoMovimientoSeeder::class,  // → tipo_movimiento
+
+            // 5. Productos (independiente)
             ProductoSeeder::class,        // → productos
 
             // 5. Usuarios y asignaciones (al final porque necesitan todo lo anterior)

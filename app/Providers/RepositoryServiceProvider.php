@@ -6,6 +6,10 @@ namespace App\Providers;
 
 use App\Repositories\Auth\Eloquent\AuthRepository;
 use App\Repositories\Auth\Interfaces\AuthRepositoryInterface;
+use App\Repositories\Caja\Eloquent\CajaRepository;
+use App\Repositories\Caja\Interfaces\CajaRepositoryInterface;
+use App\Repositories\Movimiento\Eloquent\MovimientoRepository;
+use App\Repositories\Movimiento\Interfaces\MovimientoRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 
 class RepositoryServiceProvider extends ServiceProvider
@@ -20,5 +24,7 @@ class RepositoryServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(AuthRepositoryInterface::class, AuthRepository::class);
+        $this->app->bind(CajaRepositoryInterface::class, CajaRepository::class);
+        $this->app->bind(MovimientoRepositoryInterface::class, MovimientoRepository::class);
     }
 }
