@@ -49,6 +49,9 @@ Route::middleware('auth:api')->group(function (): void {
 
     // Movimientos
     Route::prefix('movimientos')->name('movimientos.')->group(function (): void {
+        Route::get('plantilla', [MovimientoController::class, 'plantilla'])->name('plantilla');
+        Route::get('exportar', [MovimientoController::class, 'exportar'])->name('exportar');
+        Route::post('importar', [MovimientoController::class, 'importar'])->name('importar');
         Route::get('table', [MovimientoController::class, 'table'])->name('table');
         Route::post('/', [MovimientoController::class, 'store'])->name('store');
         Route::get('{id}', [MovimientoController::class, 'show'])->name('show');

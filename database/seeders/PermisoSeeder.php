@@ -24,6 +24,10 @@ class PermisoSeeder extends Seeder
             ['perm_nombre' => 'cajas.detalle'],
             ['perm_nombre' => 'movimientos'],
             ['perm_nombre' => 'movimientos.nuevo'],
+            ['perm_nombre' => 'movimientos.excel'],
+            ['perm_nombre' => 'movimientos.excel.plantilla'],
+            ['perm_nombre' => 'movimientos.excel.exportar'],
+            ['perm_nombre' => 'movimientos.excel.importar'],
 
             // ── Administración ────────────────────────────────────────
             ['perm_nombre' => 'usuarios'],
