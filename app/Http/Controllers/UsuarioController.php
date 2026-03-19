@@ -15,6 +15,7 @@ use App\Services\UsuarioImportService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class UsuarioController extends Controller
@@ -348,7 +349,12 @@ class UsuarioController extends Controller
      */
     public function plantilla(): StreamedResponse
     {
-        return $this->importService->generarPlantilla();
+        try {
+            $response = $this->importService->generarPlantilla();
+            return $response;
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
 
     /**

@@ -120,16 +120,20 @@ class UsuarioImportService
         // ── Congelar paneles para que los headers sean siempre visibles ───
         $sheet->freezePane('A3');
 
-        // ── Streamed response ─────────────────────────────────────────────
+        // ── Escribir a archivo temporal y servir como response ───────────
         $writer   = new Xlsx($spreadsheet);
         $filename = 'plantilla_usuarios_' . now()->format('Ymd') . '.xlsx';
+        $tmpPath  = tempnam(sys_get_temp_dir(), 'plantilla_') . '.xlsx';
+        $writer->save($tmpPath);
 
-        return new StreamedResponse(function () use ($writer): void {
-            $writer->save('php://output');
+        return new StreamedResponse(function () use ($tmpPath): void {
+            readfile($tmpPath);
+            @unlink($tmpPath);
         }, 200, [
             'Content-Type'        => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             'Content-Disposition' => "attachment; filename=\"{$filename}\"",
-            'Cache-Control'       => 'max-age=0',
+            'Content-Length'      => filesize($tmpPath),
+            'Cache-Control'       => 'no-cache',
         ]);
     }
 
@@ -220,13 +224,17 @@ class UsuarioImportService
 
         $writer   = new Xlsx($spreadsheet);
         $filename = 'usuarios_' . now()->format('Ymd_His') . '.xlsx';
+        $tmpPath  = tempnam(sys_get_temp_dir(), 'export_') . '.xlsx';
+        $writer->save($tmpPath);
 
-        return new StreamedResponse(function () use ($writer): void {
-            $writer->save('php://output');
+        return new StreamedResponse(function () use ($tmpPath): void {
+            readfile($tmpPath);
+            @unlink($tmpPath);
         }, 200, [
             'Content-Type'        => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             'Content-Disposition' => "attachment; filename=\"{$filename}\"",
-            'Cache-Control'       => 'max-age=0',
+            'Content-Length'      => filesize($tmpPath),
+            'Cache-Control'       => 'no-cache',
         ]);
     }
 
