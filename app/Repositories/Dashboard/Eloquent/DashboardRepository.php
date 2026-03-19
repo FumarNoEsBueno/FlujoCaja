@@ -28,19 +28,18 @@ class DashboardRepository implements DashboardRepositoryInterface
 
         $cajaIds = $cajasIds->pluck('caja_id')->toArray();
 
-        $movimientosDeHoy = Movimiento::whereIn('caja_id', $cajaIds)
-            ->whereDate('movi_fecha_ingreso', $hoy)
-            ->get();
-
         // ─── Ventas Hoy ───────────────────────────────────────────────────────────
-        $ventasHoy = $movimientosDeHoy->sum('movi_monto_total');
+        $ventasHoy = Movimiento::whereIn('caja_id', $cajaIds)
+            ->whereDate('movi_fecha_ingreso', $hoy)
+            ->sum('movi_monto_total');
 
         // ─── Movimientos por caja (hoy) ──────────────────────────────────────────
-        $movimientosPorCaja = $movimientosDeHoy->groupBy('caja_id')->map(function ($movimientos) {
-            return [
-                'total_movimientos' => $movimientos->count(),
-            ];
-        });
+        $movimientosPorCaja = Movimiento::select('caja_id', DB::raw('COUNT(*) as total_movimientos'))
+            ->whereIn('caja_id', $cajaIds)
+            ->whereDate('movi_fecha_ingreso', $hoy)
+            ->groupBy('caja_id')
+            ->get()
+            ->keyBy('caja_id');
 
         // ─── Monto total por caja (acumulado total) ───────────────────────────────
         $montoPorCaja = Movimiento::select('caja_id', DB::raw('SUM(movi_monto_total) as monto_total'))
@@ -66,7 +65,7 @@ class DashboardRepository implements DashboardRepositoryInterface
         // ─── Productos vendidos hoy ───────────────────────────────────────────────
         $productosDia = DB::table('productos_del_movimiento as pdm')
             ->join('movimientos as m', 'm.id', '=', 'pdm.movi_id')
-            ->join('producto as p', 'p.id', '=', 'pdm.prod_id')
+            ->join('productos as p', 'p.id', '=', 'pdm.prod_id')
             ->whereIn('m.caja_id', $cajaIds)
             ->whereDate('m.movi_fecha_ingreso', $hoy)
             ->select(
