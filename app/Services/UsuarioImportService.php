@@ -144,7 +144,7 @@ class UsuarioImportService
      */
     public function exportar(array $filters, string $orden, ?int $limite): StreamedResponse
     {
-        $query = \App\Models\Usuario::with('rol')
+        $query = Usuario::with('rol')
             ->when($filters['nombre'] ?? null, fn ($q, $v) =>
                 $q->where(
                     \Illuminate\Support\Facades\DB::raw("CONCAT(usua_nombre, ' ', usua_apellido_p)"),
