@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repositories\Dashboard\Eloquent;
 
 use App\Models\Movimiento;
+use App\Models\ProductosDelMovimiento;
 use App\Models\UsuariosPorCaja;
 use App\Repositories\Dashboard\Interfaces\DashboardRepositoryInterface;
 use Illuminate\Support\Carbon;
@@ -23,23 +24,23 @@ class DashboardRepository implements DashboardRepositoryInterface
         $cajasIds = UsuariosPorCaja::where('usua_id', $usuaId)
             ->where('usca_habilitado', true)
             ->with(['caja.local'])
-            ->limit(10)
             ->get();
 
         $cajaIds = $cajasIds->pluck('caja_id')->toArray();
 
-        // ─── Ventas Hoy ───────────────────────────────────────────────────────────
-        $ventasHoy = Movimiento::whereIn('caja_id', $cajaIds)
+        $movimientosDeHoy = Movimiento::whereIn('caja_id', $cajaIds)
             ->whereDate('movi_fecha_ingreso', $hoy)
-            ->sum('movi_monto_total');
+            ->get();
+
+        // ─── Ventas Hoy ───────────────────────────────────────────────────────────
+        $ventasHoy = $movimientosDeHoy->sum('movi_monto_total');
 
         // ─── Movimientos por caja (hoy) ──────────────────────────────────────────
-        $movimientosPorCaja = Movimiento::select('caja_id', DB::raw('COUNT(*) as total_movimientos'))
-            ->whereIn('caja_id', $cajaIds)
-            ->whereDate('movi_fecha_ingreso', $hoy)
-            ->groupBy('caja_id')
-            ->get()
-            ->keyBy('caja_id');
+        $movimientosPorCaja = $movimientosDeHoy->groupBy('caja_id')->map(function ($movimientos) {
+            return [
+                'total_movimientos' => $movimientos->count(),
+            ];
+        });
 
         // ─── Monto total por caja (acumulado total) ───────────────────────────────
         $montoPorCaja = Movimiento::select('caja_id', DB::raw('SUM(movi_monto_total) as monto_total'))
@@ -62,31 +63,27 @@ class DashboardRepository implements DashboardRepositoryInterface
             ];
         })->values()->toArray();
 
+        $productosCalculados = [];
+
         // ─── Productos vendidos hoy ───────────────────────────────────────────────
-        $productosDia = DB::table('productos_del_movimiento as pdm')
-            ->join('movimientos as m', 'm.id', '=', 'pdm.movi_id')
-            ->join('productos as p', 'p.id', '=', 'pdm.prod_id')
-            ->whereIn('m.caja_id', $cajaIds)
-            ->whereDate('m.movi_fecha_ingreso', $hoy)
-            ->select(
-                'p.id as prodId',
-                'p.prod_nombre as prodNombre',
-                DB::raw('SUM(pdm.pdmo_cantidad) as totalVendido'),
-            )
-            ->groupBy('p.id', 'p.prod_nombre')
-            ->orderByDesc('totalVendido')
-            ->get()
-            ->map(fn($item) => [
-                'prodId'       => $item->prodId,
-                'prodNombre'   => $item->prodNombre,
-                'totalVendido' => (int) $item->totalVendido,
-            ])
-            ->toArray();
+        ProductosDelMovimiento::select(
+            'p.prod_nombre as prodNombre',
+            'p.id as prodId',
+            'productos_del_movimiento.pdmo_cantidad as cantidad'
+        )
+            ->join('movimientos', 'productos_del_movimiento.movi_id', '=', 'movimientos.id')
+            ->join('producto as p', 'productos_del_movimiento.prod_id', '=', 'p.id')
+            ->whereDate('movi_fecha_ingreso', $hoy)
+            ->get()->map(function ($item) use (&$productosCalculados) {
+                $productosCalculados[$item->prodId]['prodNombre'] = $item->prodNombre;
+                $productosCalculados[$item->prodId]['totalVendido'] = ($productosCalculados[$item->prodId]['cantidad'] ?? 0) + $item->cantidad;
+                $productosCalculados[$item->prodId]['prodId'] = $item->prodId;
+            });
 
         return [
-            'ventasHoy'       => (float) $ventasHoy,
+            'ventasHoy'       => $ventasHoy,
             'cajas'           => $cajas,
-            'productosDia'    => $productosDia,
+            'productosDia'    => array_values($productosCalculados),
         ];
     }
 }

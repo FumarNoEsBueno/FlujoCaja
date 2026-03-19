@@ -24,6 +24,8 @@ class Movimiento extends Model
 
     protected $casts = [
         'movi_fecha_ingreso' => 'date',
+        'movi_monto_total'   => 'float',
+        'movi_propina'       => 'integer',
     ];
 
     public function tipoMovimiento(): BelongsTo
