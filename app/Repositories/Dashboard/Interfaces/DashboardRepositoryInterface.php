@@ -6,5 +6,5 @@ namespace App\Repositories\Dashboard\Interfaces;
 
 interface DashboardRepositoryInterface
 {
-    
+    public function getData(int $usuaId): array;
 }
