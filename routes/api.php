@@ -62,6 +62,9 @@ Route::middleware('auth:api')->group(function (): void {
 
     // Usuarios
     Route::prefix('usuarios')->name('usuarios.')->group(function (): void {
+        Route::get('plantilla', [UsuarioController::class, 'plantilla'])->name('plantilla');
+        Route::get('exportar', [UsuarioController::class, 'exportar'])->name('exportar');
+        Route::post('importar', [UsuarioController::class, 'importar'])->name('importar');
         Route::get('table', [UsuarioController::class, 'table'])->name('table');
         Route::post('/', [UsuarioController::class, 'store'])->name('store');
         Route::get('{id}', [UsuarioController::class, 'show'])->name('show');
