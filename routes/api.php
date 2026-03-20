@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CajaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MovimientoController;
+use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\RolController;
 use App\Http\Controllers\UsuarioController;
@@ -45,6 +46,14 @@ Route::middleware('auth:api')->group(function (): void {
     // Productos
     Route::prefix('productos')->name('productos.')->group(function (): void {
         Route::get('autocomplete', [ProductoController::class, 'autocomplete'])->name('autocomplete');
+        Route::get('plantilla', [ProductoController::class, 'plantilla'])->name('plantilla');
+        Route::get('exportar', [ProductoController::class, 'exportar'])->name('exportar');
+        Route::post('importar', [ProductoController::class, 'importar'])->name('importar');
+        Route::get('table', [ProductoController::class, 'table'])->name('table');
+        Route::post('/', [ProductoController::class, 'store'])->name('store');
+        Route::get('{id}', [ProductoController::class, 'show'])->name('show');
+        Route::put('{id}', [ProductoController::class, 'update'])->name('update');
+        Route::delete('{id}', [ProductoController::class, 'destroy'])->name('destroy');
     });
 
     // Movimientos
@@ -61,6 +70,19 @@ Route::middleware('auth:api')->group(function (): void {
     // Roles
     Route::prefix('roles')->name('roles.')->group(function (): void {
         Route::get('autocomplete', [RolController::class, 'autocomplete'])->name('autocomplete');
+        Route::get('permisos', [RolController::class, 'permisos'])->name('permisos');
+        Route::get('table', [RolController::class, 'table'])->name('table');
+        Route::post('/', [RolController::class, 'store'])->name('store');
+        Route::get('{id}', [RolController::class, 'show'])->name('show');
+        Route::put('{id}', [RolController::class, 'update'])->name('update');
+        Route::delete('{id}', [RolController::class, 'destroy'])->name('destroy');
+    });
+
+    // Perfil (usuario autenticado)
+    Route::prefix('perfil')->name('perfil.')->group(function (): void {
+        Route::get('/', [PerfilController::class, 'show'])->name('show');
+        Route::patch('correo', [PerfilController::class, 'updateCorreo'])->name('correo');
+        Route::patch('password', [PerfilController::class, 'updatePassword'])->name('password');
     });
 
     // Usuarios

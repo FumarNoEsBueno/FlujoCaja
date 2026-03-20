@@ -24,18 +24,15 @@ class UsuarioRepository implements UsuarioRepositoryInterface
     {
         return Usuario::with('rol')
             ->withCount('usuariosPorCaja')
-            ->when($filters['nombre'] ?? null, fn ($q, $v) =>
-                $q->where(
-                    DB::raw("CONCAT(usua_nombre, ' ', usua_apellido_p)"),
-                    'LIKE',
-                    "%{$v}%"
-                )
+            ->when($filters['nombre'] ?? null, fn ($q, $v) => $q->where(
+                DB::raw("CONCAT(usua_nombre, ' ', usua_apellido_p)"),
+                'LIKE',
+                "%{$v}%"
             )
-            ->when($filters['rut'] ?? null, fn ($q, $v) =>
-                $q->where('usua_rut', 'LIKE', "%{$v}%")
             )
-            ->when($filters['role_id'] ?? null, fn ($q, $v) =>
-                $q->where('role_id', $v)
+            ->when($filters['rut'] ?? null, fn ($q, $v) => $q->where('usua_rut', 'LIKE', "%{$v}%")
+            )
+            ->when($filters['role_id'] ?? null, fn ($q, $v) => $q->where('role_id', $v)
             )
             ->orderBy('usua_nombre')
             ->simplePaginate(self::PER_PAGE);
@@ -53,15 +50,15 @@ class UsuarioRepository implements UsuarioRepositoryInterface
     public function store(StoreUsuarioDTO $dto): Usuario
     {
         $usuario = Usuario::create([
-            'usua_nombre'     => $dto->usua_nombre,
+            'usua_nombre' => $dto->usua_nombre,
             'usua_apellido_p' => $dto->usua_apellido_p,
             'usua_apellido_m' => $dto->usua_apellido_m,
-            'usua_rut'        => $dto->usua_rut,
-            'usua_dv'         => $dto->usua_dv,
-            'usua_correo'     => $dto->usua_correo,
-            'usua_fecha_nac'  => $dto->usua_fecha_nac,
-            'usua_password'   => $dto->usua_password,
-            'role_id'         => $dto->role_id,
+            'usua_rut' => $dto->usua_rut,
+            'usua_dv' => $dto->usua_dv,
+            'usua_correo' => $dto->usua_correo,
+            'usua_fecha_nac' => $dto->usua_fecha_nac,
+            'usua_password' => $dto->usua_password,
+            'role_id' => $dto->role_id,
         ]);
 
         return $usuario->load('rol');
@@ -124,9 +121,9 @@ class UsuarioRepository implements UsuarioRepositoryInterface
     {
         /** @var UsuariosPorCaja $uc */
         $uc = UsuariosPorCaja::create([
-            'usua_id'           => $usuaId,
-            'caja_id'           => $cajaId,
-            'usca_habilitado'   => $habilitado,
+            'usua_id' => $usuaId,
+            'caja_id' => $cajaId,
+            'usca_habilitado' => $habilitado,
             'usca_fecha_inicio' => $fechaInicio ?? now()->toDateString(),
         ]);
 

@@ -14,6 +14,7 @@ use App\Services\MovimientoExcelService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\AbstractPaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -24,7 +25,7 @@ class MovimientoController extends Controller
 
     public function __construct(
         private readonly MovimientoRepositoryInterface $movimientoRepository,
-        private readonly MovimientoExcelService        $excelService,
+        private readonly MovimientoExcelService $excelService,
     ) {}
 
     /**
@@ -40,15 +41,15 @@ class MovimientoController extends Controller
 
             $paginator = $this->movimientoRepository->table($filters);
 
-            /** @var \Illuminate\Pagination\AbstractPaginator $paginator */
+            /** @var AbstractPaginator $paginator */
             $items = MovimientoResource::collection($paginator->getCollection());
 
             return $this->paginatedResponse(
                 data: $items,
                 meta: [
                     'current_page' => $paginator->currentPage(),
-                    'per_page'     => $paginator->perPage(),
-                    'has_more'     => $paginator->hasMorePages(),
+                    'per_page' => $paginator->perPage(),
+                    'has_more' => $paginator->hasMorePages(),
                     'next_page_url' => $paginator->nextPageUrl(),
                 ],
                 message: 'Movimientos obtenidos correctamente.',
@@ -171,8 +172,8 @@ class MovimientoController extends Controller
     public function exportar(Request $request): StreamedResponse|JsonResponse
     {
         $request->validate([
-            'desde'  => ['sometimes', 'nullable', 'date_format:Y-m-d'],
-            'hasta'  => ['sometimes', 'nullable', 'date_format:Y-m-d'],
+            'desde' => ['sometimes', 'nullable', 'date_format:Y-m-d'],
+            'hasta' => ['sometimes', 'nullable', 'date_format:Y-m-d'],
             'limite' => ['sometimes', 'nullable', 'integer', 'min:1', 'max:10000'],
         ]);
 
@@ -182,7 +183,7 @@ class MovimientoController extends Controller
         if (! $todos && ! $request->filled('limite')) {
             return response()->json([
                 'message' => 'El campo límite es obligatorio cuando no se exportan todos los registros.',
-                'errors'  => ['limite' => ['El límite es requerido.']],
+                'errors' => ['limite' => ['El límite es requerido.']],
             ], 422);
         }
 
@@ -215,21 +216,21 @@ class MovimientoController extends Controller
     public function importar(Request $request): JsonResponse
     {
         $request->validate([
-            'archivo'       => ['required', 'file', 'mimes:xlsx,xls', 'max:5120'],
+            'archivo' => ['required', 'file', 'mimes:xlsx,xls', 'max:5120'],
             'email_reporte' => ['required', 'email'],
         ]);
 
         try {
-            $usuaId        = (int) Auth::guard('api')->id();
-            $archivo       = $request->file('archivo');
+            $usuaId = (int) Auth::guard('api')->id();
+            $archivo = $request->file('archivo');
             $nombreArchivo = $archivo->getClientOriginalName();
-            $rutaTemporal  = $archivo->getRealPath();
+            $rutaTemporal = $archivo->getRealPath();
 
             $resultado = $this->excelService->importar(
-                rutaArchivo:   $rutaTemporal,
+                rutaArchivo: $rutaTemporal,
                 nombreArchivo: $nombreArchivo,
-                emailDestino:  $request->email_reporte,
-                usuaId:        $usuaId,
+                emailDestino: $request->email_reporte,
+                usuaId: $usuaId,
             );
 
             $mensaje = $resultado['errores'] > 0

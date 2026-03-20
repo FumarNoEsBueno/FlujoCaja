@@ -14,29 +14,29 @@ class MovimientoResource extends JsonResource
         $verificacion = $this->verificarMontos();
 
         return [
-            'id'             => $this->id,
-            'descripcion'    => $this->movi_descripcion,
-            'fechaIngreso'   => $this->movi_fecha_ingreso?->format('d/m/Y'),
-            'idTransaccion'  => $this->movi_id_transaccion,
-            'montoTotal'     => $this->movi_monto_total,
-            'medioPago'      => $this->movi_medio_pago,
-            'propina'        => $this->movi_propina,
+            'id' => $this->id,
+            'descripcion' => $this->movi_descripcion,
+            'fechaIngreso' => $this->movi_fecha_ingreso?->format('d/m/Y'),
+            'idTransaccion' => $this->movi_id_transaccion,
+            'montoTotal' => $this->movi_monto_total,
+            'medioPago' => $this->movi_medio_pago,
+            'propina' => $this->movi_propina,
             'tipoMovimiento' => $this->tipoMovimiento?->timo_nombre,
-            'usuario'        => $this->usuario
+            'usuario' => $this->usuario
                 ? trim($this->usuario->usua_nombre.' '.$this->usuario->usua_apellido_p)
                 : null,
-            'caja'           => $this->caja?->caja_nombre,
-            'productos'      => $this->whenLoaded(
+            'caja' => $this->caja?->caja_nombre,
+            'productos' => $this->whenLoaded(
                 'productosDelMovimiento',
                 fn () => $this->productosDelMovimiento->map(fn ($p) => [
-                    'id'            => $p->id,
-                    'nombre'        => $p->producto?->prod_nombre,
-                    'cantidad'      => $p->pdmo_cantidad,
+                    'id' => $p->id,
+                    'nombre' => $p->producto?->prod_nombre,
+                    'cantidad' => $p->pdmo_cantidad,
                     'montoUnitario' => $p->pdmo_monto_unitario,
                 ])->values(),
                 [],
             ),
-            'verificacion'   => $verificacion,
+            'verificacion' => $verificacion,
         ];
     }
 
@@ -56,16 +56,16 @@ class MovimientoResource extends JsonResource
 
         if ($productos->isEmpty()) {
             return [
-                'aplica'         => false,
-                'coincide'       => true,
+                'aplica' => false,
+                'coincide' => true,
                 'montoDeclarado' => '0',
                 'montoProductos' => '0',
-                'motivos'        => [],
+                'motivos' => [],
             ];
         }
 
-        $montoTotal     = (float) $this->movi_monto_total;
-        $propina        = (float) ($this->movi_propina ?? 0);
+        $montoTotal = (float) $this->movi_monto_total;
+        $propina = (float) ($this->movi_propina ?? 0);
 
         // Lo que debería corresponder a los productos: total menos la propina del cliente
         $montoDeclarado = $montoTotal - $propina;
@@ -78,11 +78,11 @@ class MovimientoResource extends JsonResource
         $coincide = abs($montoDeclarado - $montoProductos) < 0.01;
 
         return [
-            'aplica'         => true,
-            'coincide'       => $coincide,
+            'aplica' => true,
+            'coincide' => $coincide,
             'montoDeclarado' => number_format($montoDeclarado, 2, '.', ''),
             'montoProductos' => number_format($montoProductos, 2, '.', ''),
-            'motivos'        => $coincide ? [] : $this->detectarMotivos($montoDeclarado, $montoProductos, $propina, $montoTotal),
+            'motivos' => $coincide ? [] : $this->detectarMotivos($montoDeclarado, $montoProductos, $propina, $montoTotal),
         ];
     }
 
@@ -98,9 +98,9 @@ class MovimientoResource extends JsonResource
         float $propina,
         float $montoTotal,
     ): array {
-        $motivos    = [];
+        $motivos = [];
         $diferencia = $montoDeclarado - $montoProductos;
-        $productos  = $this->productosDelMovimiento;
+        $productos = $this->productosDelMovimiento;
 
         // ── Propina sospechosa ────────────────────────────────────────────────
         // Si sin restar la propina el total coincidiría, la propina está mal ingresada
@@ -116,8 +116,8 @@ class MovimientoResource extends JsonResource
             $precio = (float) $p->pdmo_monto_unitario;
             if ($precio > 0 && abs(fmod(abs($diferencia), $precio)) < 0.01) {
                 $unidades = (int) round(abs($diferencia) / $precio);
-                $nombre   = $p->producto?->prod_nombre ?? 'un producto';
-                $accion   = $diferencia > 0 ? 'de más' : 'de menos';
+                $nombre = $p->producto?->prod_nombre ?? 'un producto';
+                $accion = $diferencia > 0 ? 'de más' : 'de menos';
                 $motivos[] = "Posible error de cantidad: {$unidades} unidad(es) {$accion} de \"{$nombre}\".";
                 break;
             }

@@ -55,11 +55,11 @@ class DashboardRepository implements DashboardRepositoryInterface
             $cajaId = $caja->id;
 
             return [
-                'cajaId'             => $cajaId,
-                'cajaNombre'         => $caja->caja_nombre,
-                'localNombre'        => $caja->local?->loca_nombre ?? 'Sin local',
-                'totalMovimientos'   => (int) ($movimientosPorCaja[$cajaId]?->total_movimientos ?? 0),
-                'montoTotal'         => (float) ($montoPorCaja[$cajaId]?->monto_total ?? 0),
+                'cajaId' => $cajaId,
+                'cajaNombre' => $caja->caja_nombre,
+                'localNombre' => $caja->local?->loca_nombre ?? 'Sin local',
+                'totalMovimientos' => (int) ($movimientosPorCaja[$cajaId]?->total_movimientos ?? 0),
+                'montoTotal' => (float) ($montoPorCaja[$cajaId]?->monto_total ?? 0),
             ];
         })->values()->toArray();
 
@@ -81,9 +81,9 @@ class DashboardRepository implements DashboardRepositoryInterface
             });
 
         return [
-            'ventasHoy'       => $ventasHoy,
-            'cajas'           => $cajas,
-            'productosDia'    => array_values($productosCalculados),
+            'ventasHoy' => $ventasHoy,
+            'cajas' => $cajas,
+            'productosDia' => array_values($productosCalculados),
         ];
     }
 }

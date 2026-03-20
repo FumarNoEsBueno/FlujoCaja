@@ -11,7 +11,6 @@ use App\Repositories\Caja\Interfaces\CajaRepositoryInterface;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
-use Throwable;
 
 class CajaController extends Controller
 {
@@ -30,7 +29,7 @@ class CajaController extends Controller
     {
         try {
             $usuaId = (int) Auth::guard('api')->id();
-            $cajas  = $this->cajaRepository->autocomplete($usuaId);
+            $cajas = $this->cajaRepository->autocomplete($usuaId);
 
             return $this->successResponse(
                 data: $cajas->map(fn (Caja $c) => ['id' => $c->id, 'label' => $c->caja_nombre]),
@@ -55,7 +54,7 @@ class CajaController extends Controller
     {
         try {
             $usuaId = (int) Auth::guard('api')->id();
-            $cajas  = $this->cajaRepository->index($usuaId);
+            $cajas = $this->cajaRepository->index($usuaId);
 
             return $this->successResponse(
                 data: CajaResource::collection($cajas),

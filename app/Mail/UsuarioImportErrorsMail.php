@@ -19,9 +19,9 @@ class UsuarioImportErrorsMail extends Mailable
      */
     public function __construct(
         public readonly string $nombreArchivo,
-        public readonly int    $totalFilas,
-        public readonly int    $importados,
-        public readonly array  $errores,
+        public readonly int $totalFilas,
+        public readonly int $importados,
+        public readonly array $errores,
     ) {}
 
     public function envelope(): Envelope

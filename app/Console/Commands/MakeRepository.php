@@ -17,9 +17,9 @@ class MakeRepository extends Command
 
     public function handle(): int
     {
-        $name      = Str::studly($this->argument('name'));
-        $withDto   = ! $this->option('no-dto');
-        $basePath  = app_path("Repositories/{$name}");
+        $name = Str::studly($this->argument('name'));
+        $withDto = ! $this->option('no-dto');
+        $basePath = app_path("Repositories/{$name}");
 
         if (is_dir($basePath)) {
             $this->error("El repositorio [{$name}] ya existe en app/Repositories/{$name}");
@@ -73,8 +73,8 @@ class MakeRepository extends Command
     {
         $namespace = "App\\Repositories\\{$name}\\Interfaces";
         $interface = "{$name}RepositoryInterface";
-        $model     = "App\\Models\\{$name}";
-        $dtoNs     = "App\\Repositories\\{$name}\\DTOs\\Store{$name}DTO";
+        $model = "App\\Models\\{$name}";
+        $dtoNs = "App\\Repositories\\{$name}\\DTOs\\Store{$name}DTO";
 
         $stub = <<<PHP
         <?php
@@ -122,13 +122,13 @@ class MakeRepository extends Command
 
     private function createEloquent(string $basePath, string $name): void
     {
-        $namespace  = "App\\Repositories\\{$name}\\Eloquent";
-        $class      = "{$name}Repository";
-        $interface  = "{$name}RepositoryInterface";
-        $model      = $name;
-        $modelFqn   = "App\\Models\\{$name}";
-        $dtoFqn     = "App\\Repositories\\{$name}\\DTOs\\Store{$name}DTO";
-        $ifaceFqn   = "App\\Repositories\\{$name}\\Interfaces\\{$interface}";
+        $namespace = "App\\Repositories\\{$name}\\Eloquent";
+        $class = "{$name}Repository";
+        $interface = "{$name}RepositoryInterface";
+        $model = $name;
+        $modelFqn = "App\\Models\\{$name}";
+        $dtoFqn = "App\\Repositories\\{$name}\\DTOs\\Store{$name}DTO";
+        $ifaceFqn = "App\\Repositories\\{$name}\\Interfaces\\{$interface}";
 
         $stub = <<<PHP
         <?php
@@ -186,7 +186,7 @@ class MakeRepository extends Command
     private function createDto(string $basePath, string $name): void
     {
         $namespace = "App\\Repositories\\{$name}\\DTOs";
-        $class     = "Store{$name}DTO";
+        $class = "Store{$name}DTO";
 
         $stub = <<<PHP
         <?php
@@ -236,27 +236,27 @@ class MakeRepository extends Command
 
     private function printNextSteps(string $name): void
     {
-        $binding    = "{$name}RepositoryInterface::class => {$name}Repository::class";
+        $binding = "{$name}RepositoryInterface::class => {$name}Repository::class";
         $providerNs = "use App\\Repositories\\{$name}\\Interfaces\\{$name}RepositoryInterface;";
-        $repoNs     = "use App\\Repositories\\{$name}\\Eloquent\\{$name}Repository;";
+        $repoNs = "use App\\Repositories\\{$name}\\Eloquent\\{$name}Repository;";
 
         $this->line('  <fg=yellow>Próximos pasos:</>');
-        $this->line("  1. Registrá el binding en <fg=cyan>AppServiceProvider.php</>:");
+        $this->line('  1. Registrá el binding en <fg=cyan>AppServiceProvider.php</>:');
         $this->newLine();
         $this->line("     <fg=gray>{$providerNs}</>");
         $this->line("     <fg=gray>{$repoNs}</>");
         $this->newLine();
-        $this->line("     <fg=gray>\$this->app->bind(</>");
+        $this->line('     <fg=gray>$this->app->bind(</>');
         $this->line("     <fg=gray>    {$binding}</>");
-        $this->line("     <fg=gray>);</>");
+        $this->line('     <fg=gray>);</>');
         $this->newLine();
-        $this->line("  2. Completá los <fg=cyan>TODO</> en el DTO y el Eloquent Repository.");
+        $this->line('  2. Completá los <fg=cyan>TODO</> en el DTO y el Eloquent Repository.');
         $this->line("  3. Creá el Model si no existe:  <fg=cyan>php artisan make:model {$name}</>");
         $this->newLine();
     }
 
     private function relativePath(string $absolute): string
     {
-        return str_replace(base_path() . '/', '', $absolute);
+        return str_replace(base_path().'/', '', $absolute);
     }
 }

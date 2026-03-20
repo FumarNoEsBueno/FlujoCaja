@@ -7,7 +7,6 @@ namespace App\Repositories\Caja\Eloquent;
 use App\Models\Caja;
 use App\Repositories\Caja\Interfaces\CajaRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class CajaRepository implements CajaRepositoryInterface
 {

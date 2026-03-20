@@ -20,7 +20,7 @@ final readonly class LoginDTO
      */
     public static function fromRequest(LoginRequest $request): self
     {
-        $rutFormated = (new RutHelper())->parse($request->rut);
+        $rutFormated = (new RutHelper)->parse($request->rut);
 
         return new self(
             rut: $rutFormated['rut'],

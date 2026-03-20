@@ -14,7 +14,6 @@ interface MovimientoRepositoryInterface
      * Lista movimientos paginados (10 por página) con filtros opcionales.
      *
      * @param  array{movi_id_transaccion?: string, caja_id?: int, usua_id?: int, movi_fecha_ingreso?: string}  $filters
-     * @return AbstractPaginator
      */
     public function table(array $filters = []): AbstractPaginator;
 

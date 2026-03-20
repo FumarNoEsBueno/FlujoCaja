@@ -17,7 +17,7 @@ class UsuariosPorCaja extends Model
     ];
 
     protected $casts = [
-        'usca_habilitado'   => 'boolean',
+        'usca_habilitado' => 'boolean',
         'usca_fecha_inicio' => 'date',
     ];
 

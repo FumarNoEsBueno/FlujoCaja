@@ -10,7 +10,6 @@ use App\Repositories\Auth\DTOs\LoginDTO;
 use App\Repositories\Auth\Interfaces\AuthRepositoryInterface;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Throwable;
 
 class AuthController extends Controller
 {

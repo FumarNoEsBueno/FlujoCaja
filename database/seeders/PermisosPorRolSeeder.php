@@ -27,6 +27,7 @@ class PermisosPorRolSeeder extends Seeder
             'movimientos.excel', 'movimientos.excel.plantilla', 'movimientos.excel.exportar', 'movimientos.excel.importar',
             'locales', 'locales.nuevo',
             'productos', 'productos.nuevo',
+            'productos.excel', 'productos.excel.plantilla', 'productos.excel.exportar', 'productos.excel.importar',
             'roles',
             'reportes',
         ];

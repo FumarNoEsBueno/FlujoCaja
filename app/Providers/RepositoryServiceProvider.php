@@ -12,6 +12,10 @@ use App\Repositories\Dashboard\Eloquent\DashboardRepository;
 use App\Repositories\Dashboard\Interfaces\DashboardRepositoryInterface;
 use App\Repositories\Movimiento\Eloquent\MovimientoRepository;
 use App\Repositories\Movimiento\Interfaces\MovimientoRepositoryInterface;
+use App\Repositories\Producto\Eloquent\ProductoRepository;
+use App\Repositories\Producto\Interfaces\ProductoRepositoryInterface;
+use App\Repositories\Rol\Eloquent\RolRepository;
+use App\Repositories\Rol\Interfaces\RolRepositoryInterface;
 use App\Repositories\Usuario\Eloquent\UsuarioRepository;
 use App\Repositories\Usuario\Interfaces\UsuarioRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
@@ -31,6 +35,8 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(CajaRepositoryInterface::class, CajaRepository::class);
         $this->app->bind(MovimientoRepositoryInterface::class, MovimientoRepository::class);
         $this->app->bind(DashboardRepositoryInterface::class, DashboardRepository::class);
+        $this->app->bind(ProductoRepositoryInterface::class, ProductoRepository::class);
+        $this->app->bind(RolRepositoryInterface::class, RolRepository::class);
         $this->app->bind(UsuarioRepositoryInterface::class, UsuarioRepository::class);
     }
 }

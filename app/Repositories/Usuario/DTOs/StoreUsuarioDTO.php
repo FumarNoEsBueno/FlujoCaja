@@ -23,15 +23,15 @@ final readonly class StoreUsuarioDTO
     public static function fromRequest(StoreUsuarioRequest $request): self
     {
         return new self(
-            usua_nombre:     $request->usua_nombre,
+            usua_nombre: $request->usua_nombre,
             usua_apellido_p: $request->usua_apellido_p,
             usua_apellido_m: $request->usua_apellido_m,
-            usua_rut:        $request->usua_rut,
-            usua_dv:         $request->usua_dv,
-            usua_correo:     $request->usua_correo,
-            usua_fecha_nac:  $request->usua_fecha_nac,
-            usua_password:   bcrypt($request->usua_password),
-            role_id:         (int) $request->role_id,
+            usua_rut: $request->usua_rut,
+            usua_dv: $request->usua_dv,
+            usua_correo: $request->usua_correo,
+            usua_fecha_nac: $request->usua_fecha_nac,
+            usua_password: bcrypt($request->usua_password),
+            role_id: (int) $request->role_id,
         );
     }
 }

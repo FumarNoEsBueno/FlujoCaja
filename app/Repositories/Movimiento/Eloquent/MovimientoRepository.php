@@ -44,23 +44,23 @@ class MovimientoRepository implements MovimientoRepositoryInterface
     public function store(StoreMovimientoDTO $dto): Movimiento
     {
         $movimiento = Movimiento::create([
-            'movi_descripcion'    => $dto->movi_descripcion,
-            'movi_fecha_ingreso'  => $dto->movi_fecha_ingreso,
+            'movi_descripcion' => $dto->movi_descripcion,
+            'movi_fecha_ingreso' => $dto->movi_fecha_ingreso,
             'movi_id_transaccion' => $dto->movi_id_transaccion,
-            'movi_monto_total'    => $dto->movi_monto_total,
-            'movi_medio_pago'     => $dto->movi_medio_pago,
-            'movi_propina'        => $dto->movi_propina,
-            'timo_id'             => $dto->timo_id,
-            'usua_id'             => $dto->usua_id,
-            'caja_id'             => $dto->caja_id,
+            'movi_monto_total' => $dto->movi_monto_total,
+            'movi_medio_pago' => $dto->movi_medio_pago,
+            'movi_propina' => $dto->movi_propina,
+            'timo_id' => $dto->timo_id,
+            'usua_id' => $dto->usua_id,
+            'caja_id' => $dto->caja_id,
         ]);
 
         if (! empty($dto->productos)) {
             $rows = array_map(
-                fn(array $p) => [
-                    'movi_id'             => $movimiento->id,
-                    'prod_id'             => $p['prod_id'],
-                    'pdmo_cantidad'       => $p['pdmo_cantidad'],
+                fn (array $p) => [
+                    'movi_id' => $movimiento->id,
+                    'prod_id' => $p['prod_id'],
+                    'pdmo_cantidad' => $p['pdmo_cantidad'],
                     'pdmo_monto_unitario' => $p['pdmo_monto_unitario'],
                 ],
                 $dto->productos,
@@ -78,22 +78,22 @@ class MovimientoRepository implements MovimientoRepositoryInterface
     {
         /** @var Movimiento $movimiento */
         $movimiento = Movimiento::select(
-            "id",
-            "movi_fecha_ingreso",
-            "movi_descripcion",
-            "movi_id_transaccion",
-            "movi_monto_total",
-            "movi_medio_pago",
-            "movi_propina",
-            "timo_id",
-            "usua_id",
-            "caja_id",
+            'id',
+            'movi_fecha_ingreso',
+            'movi_descripcion',
+            'movi_id_transaccion',
+            'movi_monto_total',
+            'movi_medio_pago',
+            'movi_propina',
+            'timo_id',
+            'usua_id',
+            'caja_id',
         )
             ->with([
                 'tipoMovimiento',
                 'usuario',
                 'caja',
-                'productosDelMovimiento.producto'
+                'productosDelMovimiento.producto',
             ])
             ->findOrFail($id);
 

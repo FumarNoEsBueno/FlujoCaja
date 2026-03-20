@@ -41,6 +41,10 @@ class PermisoSeeder extends Seeder
             ['perm_nombre' => 'locales.nuevo'],
             ['perm_nombre' => 'productos'],
             ['perm_nombre' => 'productos.nuevo'],
+            ['perm_nombre' => 'productos.excel'],
+            ['perm_nombre' => 'productos.excel.plantilla'],
+            ['perm_nombre' => 'productos.excel.exportar'],
+            ['perm_nombre' => 'productos.excel.importar'],
             ['perm_nombre' => 'roles'],
             ['perm_nombre' => 'reportes'],
         ];

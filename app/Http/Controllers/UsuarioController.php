@@ -15,7 +15,6 @@ use App\Services\UsuarioImportService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class UsuarioController extends Controller
@@ -24,7 +23,7 @@ class UsuarioController extends Controller
 
     public function __construct(
         private readonly UsuarioRepositoryInterface $usuarioRepository,
-        private readonly UsuarioImportService       $importService,
+        private readonly UsuarioImportService $importService,
     ) {}
 
     /**
@@ -45,9 +44,9 @@ class UsuarioController extends Controller
             return $this->paginatedResponse(
                 data: $items,
                 meta: [
-                    'current_page'  => $paginator->currentPage(),
-                    'per_page'      => $paginator->perPage(),
-                    'has_more'      => $paginator->hasMorePages(),
+                    'current_page' => $paginator->currentPage(),
+                    'per_page' => $paginator->perPage(),
+                    'has_more' => $paginator->hasMorePages(),
                     'next_page_url' => $paginator->nextPageUrl(),
                 ],
                 message: 'Usuarios obtenidos correctamente.',
@@ -70,7 +69,7 @@ class UsuarioController extends Controller
     public function store(StoreUsuarioRequest $request): JsonResponse
     {
         try {
-            $dto     = StoreUsuarioDTO::fromRequest($request);
+            $dto = StoreUsuarioDTO::fromRequest($request);
             $usuario = $this->usuarioRepository->store($dto);
 
             return $this->successResponse(
@@ -120,7 +119,7 @@ class UsuarioController extends Controller
     public function update(UpdateUsuarioRequest $request, int $id): JsonResponse
     {
         try {
-            $dto     = UpdateUsuarioDTO::fromRequest($request);
+            $dto = UpdateUsuarioDTO::fromRequest($request);
             $usuario = $this->usuarioRepository->update($id, $dto);
 
             return $this->successResponse(
@@ -173,11 +172,11 @@ class UsuarioController extends Controller
             $cajas = $this->usuarioRepository->getCajas($id);
 
             $data = $cajas->map(fn ($uc) => [
-                'id'          => $uc->id,
-                'cajaId'      => $uc->caja_id,
-                'cajaNombre'  => $uc->caja?->caja_nombre,
+                'id' => $uc->id,
+                'cajaId' => $uc->caja_id,
+                'cajaNombre' => $uc->caja?->caja_nombre,
                 'localNombre' => $uc->caja?->local?->loca_nombre,
-                'habilitado'  => $uc->usca_habilitado,
+                'habilitado' => $uc->usca_habilitado,
                 'fechaInicio' => $uc->usca_fecha_inicio?->format('Y-m-d'),
             ])->values();
 
@@ -205,25 +204,25 @@ class UsuarioController extends Controller
     {
         try {
             $request->validate([
-                'caja_id'           => ['required', 'integer', 'exists:cajas,id'],
-                'usca_habilitado'   => ['sometimes', 'boolean'],
+                'caja_id' => ['required', 'integer', 'exists:cajas,id'],
+                'usca_habilitado' => ['sometimes', 'boolean'],
                 'usca_fecha_inicio' => ['sometimes', 'nullable', 'date_format:Y-m-d'],
             ]);
 
             $uc = $this->usuarioRepository->asignarCaja(
-                usuaId:      $id,
-                cajaId:      (int) $request->caja_id,
-                habilitado:  (bool) ($request->usca_habilitado ?? true),
+                usuaId: $id,
+                cajaId: (int) $request->caja_id,
+                habilitado: (bool) ($request->usca_habilitado ?? true),
                 fechaInicio: $request->usca_fecha_inicio,
             );
 
             return $this->successResponse(
                 data: [
-                    'id'          => $uc->id,
-                    'cajaId'      => $uc->caja_id,
-                    'cajaNombre'  => $uc->caja?->caja_nombre,
+                    'id' => $uc->id,
+                    'cajaId' => $uc->caja_id,
+                    'cajaNombre' => $uc->caja?->caja_nombre,
                     'localNombre' => $uc->caja?->local?->loca_nombre,
-                    'habilitado'  => $uc->usca_habilitado,
+                    'habilitado' => $uc->usca_habilitado,
                     'fechaInicio' => $uc->usca_fecha_inicio?->format('Y-m-d'),
                 ],
                 message: 'Caja asignada correctamente.',
@@ -274,11 +273,11 @@ class UsuarioController extends Controller
 
             return $this->successResponse(
                 data: [
-                    'id'          => $uc->id,
-                    'cajaId'      => $uc->caja_id,
-                    'cajaNombre'  => $uc->caja?->caja_nombre,
+                    'id' => $uc->id,
+                    'cajaId' => $uc->caja_id,
+                    'cajaNombre' => $uc->caja?->caja_nombre,
                     'localNombre' => $uc->caja?->local?->loca_nombre,
-                    'habilitado'  => $uc->usca_habilitado,
+                    'habilitado' => $uc->usca_habilitado,
                     'fechaInicio' => $uc->usca_fecha_inicio?->format('Y-m-d'),
                 ],
                 message: 'Estado de la caja actualizado correctamente.',
@@ -302,11 +301,11 @@ class UsuarioController extends Controller
     public function exportar(Request $request): StreamedResponse|JsonResponse
     {
         $request->validate([
-            'nombre'   => ['sometimes', 'nullable', 'string', 'max:100'],
-            'rut'      => ['sometimes', 'nullable', 'string', 'max:12'],
-            'role_id'  => ['sometimes', 'nullable', 'integer', 'exists:roles,id'],
-            'orden'    => ['sometimes', 'in:asc,desc'],
-            'limite'   => ['sometimes', 'nullable', 'integer', 'min:1', 'max:10000'],
+            'nombre' => ['sometimes', 'nullable', 'string', 'max:100'],
+            'rut' => ['sometimes', 'nullable', 'string', 'max:12'],
+            'role_id' => ['sometimes', 'nullable', 'integer', 'exists:roles,id'],
+            'orden' => ['sometimes', 'in:asc,desc'],
+            'limite' => ['sometimes', 'nullable', 'integer', 'min:1', 'max:10000'],
         ]);
 
         // 'todos' viene como string "true"/"false" desde query params GET — filter_var lo maneja correctamente
@@ -315,18 +314,18 @@ class UsuarioController extends Controller
         if (! $todos && ! $request->filled('limite')) {
             return response()->json([
                 'message' => 'El campo límite es obligatorio cuando no se exportan todos los registros.',
-                'errors'  => ['limite' => ['El límite es requerido.']],
+                'errors' => ['limite' => ['El límite es requerido.']],
             ], 422);
         }
 
         try {
             $filters = array_filter([
-                'nombre'  => $request->input('nombre'),
-                'rut'     => $request->input('rut'),
+                'nombre' => $request->input('nombre'),
+                'rut' => $request->input('rut'),
                 'role_id' => $request->input('role_id'),
             ], fn ($v) => $v !== null && $v !== '');
 
-            $orden  = $request->input('orden', 'asc');
+            $orden = $request->input('orden', 'asc');
             $limite = $todos ? null : (int) $request->input('limite');
 
             return $this->importService->exportar($filters, $orden, $limite);
@@ -351,6 +350,7 @@ class UsuarioController extends Controller
     {
         try {
             $response = $this->importService->generarPlantilla();
+
             return $response;
         } catch (Exception $e) {
             throw $e;
@@ -367,19 +367,19 @@ class UsuarioController extends Controller
     public function importar(Request $request): JsonResponse
     {
         $request->validate([
-            'archivo'        => ['required', 'file', 'mimes:xlsx,xls', 'max:5120'],
-            'email_reporte'  => ['required', 'email'],
+            'archivo' => ['required', 'file', 'mimes:xlsx,xls', 'max:5120'],
+            'email_reporte' => ['required', 'email'],
         ]);
 
         try {
-            $archivo        = $request->file('archivo');
-            $nombreArchivo  = $archivo->getClientOriginalName();
-            $rutaTemporal   = $archivo->getRealPath();
+            $archivo = $request->file('archivo');
+            $nombreArchivo = $archivo->getClientOriginalName();
+            $rutaTemporal = $archivo->getRealPath();
 
             $resultado = $this->importService->importar(
-                rutaArchivo:   $rutaTemporal,
+                rutaArchivo: $rutaTemporal,
                 nombreArchivo: $nombreArchivo,
-                emailDestino:  $request->email_reporte,
+                emailDestino: $request->email_reporte,
             );
 
             $mensaje = $resultado['errores'] > 0

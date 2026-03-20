@@ -14,8 +14,7 @@ final readonly class StoreDashboardDTO
 
     public static function fromRequest(Request $request): self
     {
-        return new self(
-            // TODO: mapear campos del request
-        );
+        return new self;
+        // TODO: mapear campos del request
     }
 }
