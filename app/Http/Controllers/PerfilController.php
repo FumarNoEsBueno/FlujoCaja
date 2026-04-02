@@ -8,6 +8,7 @@ use App\Http\Requests\Perfil\UpdateCorreoRequest;
 use App\Http\Requests\Perfil\UpdatePasswordRequest;
 use App\Http\Resources\UsuarioResource;
 use App\Http\Traits\ApiResponser;
+use App\Models\Usuario;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -25,7 +26,7 @@ class PerfilController extends Controller
     public function show(): JsonResponse
     {
         try {
-            /** @var \App\Models\Usuario $usuario */
+            /** @var Usuario $usuario */
             $usuario = Auth::guard('api')->user();
 
             return $this->successResponse(
@@ -50,7 +51,7 @@ class PerfilController extends Controller
     public function updateCorreo(UpdateCorreoRequest $request): JsonResponse
     {
         try {
-            /** @var \App\Models\Usuario $usuario */
+            /** @var Usuario $usuario */
             $usuario = Auth::guard('api')->user();
 
             $usuario->update(['usua_correo' => $request->usua_correo]);
@@ -78,7 +79,7 @@ class PerfilController extends Controller
     public function updatePassword(UpdatePasswordRequest $request): JsonResponse
     {
         try {
-            /** @var \App\Models\Usuario $usuario */
+            /** @var Usuario $usuario */
             $usuario = Auth::guard('api')->user();
 
             if (! Hash::check($request->password_actual, $usuario->usua_password)) {

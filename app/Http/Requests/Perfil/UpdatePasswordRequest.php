@@ -19,9 +19,9 @@ class UpdatePasswordRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'password_actual'              => ['required', 'string'],
-            'password_nuevo'               => ['required', 'string', 'min:8', 'confirmed'],
-            'password_nuevo_confirmation'  => ['required', 'string'],
+            'password_actual' => ['required', 'string'],
+            'password_nuevo' => ['required', 'string', 'min:8', 'confirmed'],
+            'password_nuevo_confirmation' => ['required', 'string'],
         ];
     }
 
@@ -31,10 +31,10 @@ class UpdatePasswordRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'password_actual.required'             => 'La contraseña actual es obligatoria.',
-            'password_nuevo.required'              => 'La nueva contraseña es obligatoria.',
-            'password_nuevo.min'                   => 'La nueva contraseña debe tener al menos 8 caracteres.',
-            'password_nuevo.confirmed'             => 'La confirmación de contraseña no coincide.',
+            'password_actual.required' => 'La contraseña actual es obligatoria.',
+            'password_nuevo.required' => 'La nueva contraseña es obligatoria.',
+            'password_nuevo.min' => 'La nueva contraseña debe tener al menos 8 caracteres.',
+            'password_nuevo.confirmed' => 'La confirmación de contraseña no coincide.',
             'password_nuevo_confirmation.required' => 'La confirmación de contraseña es obligatoria.',
         ];
     }

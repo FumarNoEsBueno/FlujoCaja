@@ -76,18 +76,35 @@ class RolRepository implements RolRepositoryInterface
 
     /**
      * Sincroniza los permisos del rol usando la tabla pivot permisos_por_rol.
-     * Los permisos recibidos se marcan como activos; los demás como inactivos.
+     *
+     * Lógica:
+     * - Si el permiso YA existe en la pivot → se SKIPEA (no se toca)
+     * - Si el permiso NO existe → se CREA con pero_activo = true
+     * - Si un permiso existente NO viene en $permIds → se DESHABILITA (pero_activo = false)
+     *
+     * Esto evita unique key errors por double-submit o condiciones de carrera.
      *
      * @param  int[]  $permIds
      */
     private function syncPermisos(Rol $rol, array $permIds): void
     {
-        $todosLosPermisos = Permiso::pluck('id');
+        $permisosSet = collect($permIds);
 
-        $syncData = $todosLosPermisos->mapWithKeys(function (int $permId) use ($permIds): array {
-            return [$permId => ['pero_activo' => in_array($permId, $permIds, strict: true)]];
-        })->toArray();
+        // 1) Deshabilitar permisos que ya existen pero NO vienen en $permIds
+        $rol->permisosPorRol()
+            ->whereNotIn('perm_id', $permisosSet)
+            ->update(['pero_activo' => false]);
 
-        $rol->permisosActivos()->sync($syncData);
+        // 2) Por cada permiso nuevo, usar firstOrCreate para evitar duplicates
+        foreach ($permisosSet as $permId) {
+            $rol->permisosPorRol()->firstOrCreate(
+                ['perm_id' => $permId],
+                ['pero_activo' => true],
+            );
+            // Si ya existía (por cualquier causa), asegurar que esté activo
+            $rol->permisosPorRol()
+                ->where('perm_id', $permId)
+                ->update(['pero_activo' => true]);
+        }
     }
 }

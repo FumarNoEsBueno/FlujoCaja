@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Usuario;
 
+use App\Rules\RutValidator;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreUsuarioRequest extends FormRequest
@@ -19,15 +20,20 @@ class StoreUsuarioRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'usua_nombre' => ['required', 'string', 'max:45'],
+            'usua_nombre'   => ['required', 'string', 'max:45'],
             'usua_apellido_p' => ['required', 'string', 'max:45'],
             'usua_apellido_m' => ['nullable', 'string', 'max:45'],
-            'usua_rut' => ['required', 'string', 'max:12'],
-            'usua_dv' => ['required', 'string', 'max:1'],
-            'usua_correo' => ['nullable', 'email', 'max:45', 'unique:usuarios,usua_correo'],
+            'usua_rut'     => [
+                'required',
+                'string',
+                'max:12',
+                new RutValidator(),
+            ],
+            'usua_dv'      => ['sometimes', 'string', 'max:1'],
+            'usua_correo'  => ['nullable', 'email', 'max:45', 'unique:usuarios,usua_correo'],
             'usua_fecha_nac' => ['required', 'date_format:Y-m-d'],
             'usua_password' => ['required', 'string', 'min:6'],
-            'role_id' => ['required', 'integer', 'exists:roles,id'],
+            'role_id'      => ['required', 'integer', 'exists:roles,id'],
         ];
     }
 
@@ -41,6 +47,7 @@ class StoreUsuarioRequest extends FormRequest
             'usua_apellido_p.required' => 'El apellido paterno es obligatorio.',
             'usua_rut.required' => 'El RUT es obligatorio.',
             'usua_dv.required' => 'El dígito verificador es obligatorio.',
+            'usua_rut.RutValidator' => 'El RUT no es válido según el algoritmo verificador (Regla 11).',
             'usua_correo.email' => 'El correo debe ser un email válido.',
             'usua_correo.unique' => 'Este correo ya está registrado.',
             'usua_fecha_nac.required' => 'La fecha de nacimiento es obligatoria.',

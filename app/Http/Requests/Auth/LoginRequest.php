@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Auth;
 
+use App\Rules\RutValidator;
 use Illuminate\Foundation\Http\FormRequest;
 
 class LoginRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true; // El acceso al login siempre está permitido (sin auth previa)
+        return true;
     }
 
     /**
@@ -19,7 +20,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'rut' => ['required', 'string', 'max:10'],
+            'rut' => ['required', 'string', 'max:12', new RutValidator()],
             'password' => ['required', 'string', 'min:6'],
         ];
     }
@@ -30,12 +31,10 @@ class LoginRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'usua_rut.required' => 'El RUT es obligatorio.',
-            'usua_rut.max' => 'El RUT no puede superar los 10 caracteres.',
-            'usua_dv.required' => 'El dígito verificador es obligatorio.',
-            'usua_dv.max' => 'El dígito verificador debe ser un solo carácter.',
-            'usua_password.required' => 'La contraseña es obligatoria.',
-            'usua_password.min' => 'La contraseña debe tener al menos 6 caracteres.',
+            'rut.required' => 'El RUT es obligatorio.',
+            'rut.max' => 'El RUT no puede superar los 12 caracteres.',
+            'password.required' => 'La contraseña es obligatoria.',
+            'password.min' => 'La contraseña debe tener al menos 6 caracteres.',
         ];
     }
 

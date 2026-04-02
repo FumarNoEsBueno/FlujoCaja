@@ -6,6 +6,7 @@ namespace App\Repositories\Movimiento\Interfaces;
 
 use App\Models\Movimiento;
 use App\Repositories\Movimiento\DTOs\StoreMovimientoDTO;
+use App\Repositories\Movimiento\DTOs\UpdateMovimientoDTO;
 use Illuminate\Pagination\AbstractPaginator;
 
 interface MovimientoRepositoryInterface
@@ -26,6 +27,11 @@ interface MovimientoRepositoryInterface
      * Retorna un movimiento por su ID con todas sus relaciones.
      */
     public function show(int $id): Movimiento;
+
+    /**
+     * Actualiza un movimiento existente y lo retorna con relaciones cargadas.
+     */
+    public function update(int $id, UpdateMovimientoDTO $dto): Movimiento;
 
     /**
      * Elimina un movimiento por su ID.

@@ -28,7 +28,6 @@ class UsuarioResource extends JsonResource
         if ($this->relationLoaded('usuariosPorCaja')) {
             $base['apellidoP'] = $this->usua_apellido_p;
             $base['apellidoM'] = $this->usua_apellido_m;
-            $base['dv'] = $this->usua_dv;
             $base['fechaNac'] = $this->usua_fecha_nac?->format('Y-m-d');
 
             $base['cajas'] = $this->usuariosPorCaja->map(fn ($uc) => [

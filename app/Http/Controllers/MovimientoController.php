@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Movimiento\StoreMovimientoRequest;
+use App\Http\Requests\Movimiento\UpdateMovimientoRequest;
 use App\Http\Resources\MovimientoResource;
 use App\Http\Traits\ApiResponser;
 use App\Models\TipoMovimiento;
 use App\Repositories\Movimiento\DTOs\StoreMovimientoDTO;
+use App\Repositories\Movimiento\DTOs\UpdateMovimientoDTO;
 use App\Repositories\Movimiento\Interfaces\MovimientoRepositoryInterface;
 use App\Services\MovimientoExcelService;
 use Exception;
@@ -116,6 +118,35 @@ class MovimientoController extends Controller
         } catch (Exception $e) {
             return $this->errorResponse(
                 message: 'Movimiento no encontrado.',
+                statusCode: 500,
+                exception: $e,
+                method: __METHOD__,
+            );
+        }
+    }
+
+    /**
+     * Actualiza un movimiento existente.
+     *
+     * PUT /api/movimientos/{id}
+     */
+    public function update(UpdateMovimientoRequest $request, int $id): JsonResponse
+    {
+        try {
+            // Verificar que el movimiento existe
+            $this->movimientoRepository->show($id);
+
+            $dto = UpdateMovimientoDTO::fromRequest($request, $id);
+
+            $movimiento = $this->movimientoRepository->update($id, $dto);
+
+            return $this->successResponse(
+                data: new MovimientoResource($movimiento),
+                message: 'Movimiento actualizado correctamente.',
+            );
+        } catch (Exception $e) {
+            return $this->errorResponse(
+                message: 'Error al actualizar el movimiento.',
                 statusCode: 500,
                 exception: $e,
                 method: __METHOD__,

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Perfil;
 
+use App\Models\Usuario;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
@@ -19,7 +20,7 @@ class UpdateCorreoRequest extends FormRequest
      */
     public function rules(): array
     {
-        /** @var \App\Models\Usuario $usuario */
+        /** @var Usuario $usuario */
         $usuario = Auth::guard('api')->user();
 
         return [
@@ -34,9 +35,9 @@ class UpdateCorreoRequest extends FormRequest
     {
         return [
             'usua_correo.required' => 'El correo es obligatorio.',
-            'usua_correo.email'    => 'El correo debe ser un email válido.',
-            'usua_correo.max'      => 'El correo no puede superar los 150 caracteres.',
-            'usua_correo.unique'   => 'Este correo ya está registrado.',
+            'usua_correo.email' => 'El correo debe ser un email válido.',
+            'usua_correo.max' => 'El correo no puede superar los 150 caracteres.',
+            'usua_correo.unique' => 'Este correo ya está registrado.',
         ];
     }
 }

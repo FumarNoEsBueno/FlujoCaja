@@ -51,29 +51,39 @@ class AuthRepository implements AuthRepositoryInterface
         /** @var Usuario $usuario */
         $usuario = Auth::guard('api')->user();
 
-        // Cargar el rol con sus permisos activos
+        // Cargar el rol con sus permisos activos (si existe)
         $usuario->load('rol.permisosActivos');
 
+        // Datos del usuario
+        $usuarioData = [
+            'id' => $usuario->id,
+            'usua_nombre' => $usuario->usua_nombre,
+            'usua_apellido_p' => $usuario->usua_apellido_p,
+            'usua_apellido_m' => $usuario->usua_apellido_m,
+            'usua_rut' => $usuario->usua_rut,
+            'usua_dv' => $usuario->usua_dv,
+            'usua_correo' => $usuario->usua_correo,
+            'usua_fecha_nac' => $usuario->usua_fecha_nac?->format('Y-m-d'),
+            'role_id' => $usuario->role_id,
+        ];
+
+        // Datos del rol (si existe)
+        if ($usuario->rol) {
+            $usuarioData['rol'] = [
+                'id' => $usuario->rol->id,
+                'role_nombre' => $usuario->rol->role_nombre,
+            ];
+        }
+
+        // Permisos activos del rol (si existe el rol)
+        $permisos = $usuario->rol?->permisosActivos
+            ?->pluck('perm_nombre')
+            ->values()
+            ->all() ?? [];
+
         return [
-            'usuario' => [
-                'id' => $usuario->id,
-                'usua_nombre' => $usuario->usua_nombre,
-                'usua_apellido_p' => $usuario->usua_apellido_p,
-                'usua_apellido_m' => $usuario->usua_apellido_m,
-                'usua_rut' => $usuario->usua_rut,
-                'usua_dv' => $usuario->usua_dv,
-                'usua_correo' => $usuario->usua_correo,
-                'usua_fecha_nac' => $usuario->usua_fecha_nac?->format('Y-m-d'),
-                'role_id' => $usuario->role_id,
-                'rol' => [
-                    'id' => $usuario->rol->id,
-                    'role_nombre' => $usuario->rol->role_nombre,
-                ],
-            ],
-            'permisos' => $usuario->rol->permisosActivos
-                ->pluck('perm_nombre')
-                ->values()
-                ->all(),
+            'usuario' => $usuarioData,
+            'permisos' => $permisos,
         ];
     }
 }

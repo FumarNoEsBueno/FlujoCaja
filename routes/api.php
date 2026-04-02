@@ -63,6 +63,7 @@ Route::middleware('auth:api')->group(function (): void {
         Route::post('importar', [MovimientoController::class, 'importar'])->name('importar');
         Route::get('table', [MovimientoController::class, 'table'])->name('table');
         Route::post('/', [MovimientoController::class, 'store'])->name('store');
+        Route::put('{id}', [MovimientoController::class, 'update'])->name('update');
         Route::get('{id}', [MovimientoController::class, 'show'])->name('show');
         Route::delete('{id}', [MovimientoController::class, 'destroy'])->name('destroy');
     });

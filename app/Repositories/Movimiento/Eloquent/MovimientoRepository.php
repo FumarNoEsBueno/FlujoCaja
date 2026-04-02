@@ -7,6 +7,7 @@ namespace App\Repositories\Movimiento\Eloquent;
 use App\Models\Movimiento;
 use App\Models\ProductosDelMovimiento;
 use App\Repositories\Movimiento\DTOs\StoreMovimientoDTO;
+use App\Repositories\Movimiento\DTOs\UpdateMovimientoDTO;
 use App\Repositories\Movimiento\Interfaces\MovimientoRepositoryInterface;
 use Illuminate\Pagination\AbstractPaginator;
 
@@ -96,6 +97,40 @@ class MovimientoRepository implements MovimientoRepositoryInterface
                 'productosDelMovimiento.producto',
             ])
             ->findOrFail($id);
+
+        return $movimiento;
+    }
+
+    public function update(int $id, UpdateMovimientoDTO $dto): Movimiento
+    {
+        $movimiento = Movimiento::findOrFail($id);
+
+        $movimiento->update([
+            'movi_descripcion' => $dto->movi_descripcion,
+            'movi_fecha_ingreso' => $dto->movi_fecha_ingreso,
+            'movi_monto_total' => $dto->movi_monto_total,
+            'movi_medio_pago' => $dto->movi_medio_pago,
+            'movi_propina' => $dto->movi_propina,
+        ]);
+
+        // Eliminar productos existentes y re-insertar los nuevos
+        ProductosDelMovimiento::where('movi_id', $movimiento->id)->delete();
+
+        if (! empty($dto->productos)) {
+            $rows = array_map(
+                fn (array $p) => [
+                    'movi_id' => $movimiento->id,
+                    'prod_id' => $p['prod_id'],
+                    'pdmo_cantidad' => $p['pdmo_cantidad'],
+                    'pdmo_monto_unitario' => $p['pdmo_monto_unitario'],
+                ],
+                $dto->productos,
+            );
+
+            ProductosDelMovimiento::insert($rows);
+        }
+
+        $movimiento->load(['tipoMovimiento', 'usuario', 'caja']);
 
         return $movimiento;
     }

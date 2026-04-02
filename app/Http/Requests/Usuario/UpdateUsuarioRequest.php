@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Usuario;
 
+use App\Rules\RutValidator;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateUsuarioRequest extends FormRequest
@@ -21,15 +22,26 @@ class UpdateUsuarioRequest extends FormRequest
         $usuarioId = (int) $this->route('id');
 
         return [
-            'usua_nombre' => ['sometimes', 'string', 'max:45'],
+            'usua_nombre'   => ['sometimes', 'string', 'max:45'],
             'usua_apellido_p' => ['sometimes', 'string', 'max:45'],
             'usua_apellido_m' => ['sometimes', 'nullable', 'string', 'max:45'],
-            'usua_rut' => ['sometimes', 'string', 'max:12'],
-            'usua_dv' => ['sometimes', 'string', 'max:1'],
-            'usua_correo' => ['sometimes', 'nullable', 'email', 'max:45', "unique:usuarios,usua_correo,{$usuarioId}"],
+            'usua_rut'     => [
+                'sometimes',
+                'string',
+                'max:12',
+                new RutValidator(),
+            ],
+            'usua_dv'      => ['sometimes', 'string', 'max:1'],
+            'usua_correo'  => [
+                'sometimes',
+                'nullable',
+                'email',
+                'max:45',
+                "unique:usuarios,usua_correo,{$usuarioId}",
+            ],
             'usua_fecha_nac' => ['sometimes', 'date_format:Y-m-d'],
             'usua_password' => ['sometimes', 'nullable', 'string', 'min:6'],
-            'role_id' => ['sometimes', 'integer', 'exists:roles,id'],
+            'role_id'      => ['sometimes', 'integer', 'exists:roles,id'],
         ];
     }
 

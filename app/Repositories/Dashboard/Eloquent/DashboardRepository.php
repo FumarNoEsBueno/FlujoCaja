@@ -41,7 +41,7 @@ class DashboardRepository implements DashboardRepositoryInterface
                 'total_movimientos' => $movimientos->count(),
             ];
         });
-    
+
         // ─── Monto total por caja (acumulado total) ───────────────────────────────
         $montoPorCaja = Movimiento::select('caja_id', DB::raw('SUM(movi_monto_total) as monto_total'))
             ->whereIn('caja_id', $cajaIds)
